@@ -1,23 +1,23 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:taskmanagement_live/ui/screens/forgot_password_verify_email_screen.dart';
+import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:taskmanagement_live/ui/screens/login_screen.dart';
 import 'package:taskmanagement_live/ui/screens/register_screen.dart';
-import 'package:taskmanagement_live/ui/widgets/screen_background.dart';
 
-import '../utils/assets_path.dart';
+import '../widgets/screen_background.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class ResetPasswordScreen extends StatefulWidget {
+  const ResetPasswordScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<ResetPasswordScreen> createState() => _ResetPasswordScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
 
-  final TextEditingController _emailTEController = TextEditingController();
-  final TextEditingController _passwordTEController = TextEditingController();
+  final TextEditingController _newPasswordTEController = TextEditingController();
+  final TextEditingController _confirmNewPasswordTEController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
@@ -35,46 +35,50 @@ class _LoginScreenState extends State<LoginScreen> {
                       height: 80,
                     ),
                     Text(
-                      "Get Started With ",
-                      style: Theme
-                          .of(context)
-                          .textTheme
-                          .titleLarge,
+                      "Set Password",
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                    const SizedBox(height: 4,),
+                    Text("Set a new password minimum length of 6 letters.",
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        color: Colors.grey,
+                      ),
                     ),
                     const SizedBox(
                       height: 24,
                     ),
                     TextFormField(
+                      controller: _newPasswordTEController,
                       textInputAction: TextInputAction.next,
-                      controller: _emailTEController,
-                      keyboardType: TextInputType.emailAddress,
                       decoration: InputDecoration(
-                        hintText: "Email",
+                        hintText: "New Password",
                       ),
                     ),
+
                     const SizedBox(
-                      height: 10,
+                      height: 16,
                     ),
+
                     TextFormField(
-                      controller: _passwordTEController,
+                      controller: _confirmNewPasswordTEController,
                       decoration: InputDecoration(
-                        hintText: "Password",
+                        hintText: "Confirm New Password",
                       ),
                     ),
+
+                    const SizedBox(
+                      height: 16,
+                    ),
+
+
                     ElevatedButton(
-                        onPressed: () {},
-                        child: Icon(Icons.arrow_circle_right_outlined)),
+                        onPressed: _onTapSubmitButton, child: Text("Confirm")),
                     const SizedBox(
                       height: 32,
                     ),
                     Center(
                       child: Column(
                         children: [
-                          TextButton(onPressed: _onTapForgotPassword,
-                              child: Text("Forgot Password ?")),
-                          const SizedBox(
-                            height: 12,
-                          ),
                           RichText(
                             text: TextSpan(
                                 style: TextStyle(
@@ -83,15 +87,15 @@ class _LoginScreenState extends State<LoginScreen> {
                                   fontSize: 14,
                                 ),
                                 children: [
-                                  TextSpan(text: "Don;t have an account ? "),
+                                  TextSpan(text: "Have account ? "),
                                   TextSpan(
-                                    text: "Sign Up",
+                                    text: "Sign In",
                                     style: TextStyle(
                                       color: Colors.green,
                                       fontWeight: FontWeight.bold,
                                     ),
                                     recognizer: TapGestureRecognizer()
-                                      ..onTap = _onTapSignUpButton,
+                                      ..onTap = _onTapSignInButton,
                                   ),
                                 ]),
                           )
@@ -104,21 +108,19 @@ class _LoginScreenState extends State<LoginScreen> {
             )));
   }
 
-  void _onTapForgotPassword() {
-    Navigator.push(context, MaterialPageRoute(
-        builder: (context) => ForgotPasswordVerifyEmailScreen()));
+  void _onTapSubmitButton(){
+    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>LoginScreen()), (pre)=>false);
   }
 
 
-  void _onTapSignUpButton() {
-    Navigator.push(context,
-        MaterialPageRoute(builder: (context) => const RegisterScreen()));
+  void _onTapSignInButton() {
+    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>const LoginScreen()), (pre)=>false);
   }
 
   @override
   void dispose() {
-    _emailTEController.dispose();
-    _passwordTEController.dispose();
+    _newPasswordTEController.dispose();
+    _confirmNewPasswordTEController.dispose();
     super.dispose();
   }
 
