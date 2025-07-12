@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:taskmanagement_live/ui/screens/cancelled_task_screen.dart';
+import 'package:taskmanagement_live/ui/screens/completed_task_screen.dart';
 import 'package:taskmanagement_live/ui/screens/new_task_screen.dart';
 import 'package:taskmanagement_live/ui/screens/progress_task_screen.dart';
 
@@ -18,8 +20,8 @@ class _MainBottomNavScreenState extends State<MainBottomNavScreen> {
   List<Widget>_screens=[
     NewTaskScreen(),
     ProgressTaskScreen(),
-    NewTaskScreen(),
-    NewTaskScreen(),
+    CompletedTaskScreen(),
+    CancelledTaskScreen(),
 
   ];
 

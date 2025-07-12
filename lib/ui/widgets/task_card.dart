@@ -1,10 +1,19 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+enum TaskStatus{
+  sNew,
+  progress,
+  completed,
+  cancelled,
+}
+
 class Taskcard extends StatelessWidget {
   const Taskcard({
-    super.key,
+    super.key, required this.taskStatus,
   });
+
+  final TaskStatus taskStatus;
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +36,7 @@ class Taskcard extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(50),
                   ),
-                  backgroundColor: Colors.blue,
+                  backgroundColor: _getStatusChipColor(),
                   side: BorderSide.none,
                 ),
                 const Spacer(),
@@ -40,4 +49,21 @@ class Taskcard extends StatelessWidget {
       ),
     );
   }
+
+  Color _getStatusChipColor(){
+    if(taskStatus==TaskStatus.sNew){
+      return Colors.blue;
+    }
+    else if(taskStatus==TaskStatus.progress){
+      return Colors.purple;
+    }
+    else if(taskStatus==TaskStatus.completed){
+      return Colors.green;
+    }
+    else if(taskStatus==TaskStatus.cancelled){
+      return Colors.red;
+    }
+    return Colors.grey;
+  }
+
 }
