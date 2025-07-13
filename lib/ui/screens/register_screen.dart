@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:taskmanagement_live/data/service/network_client.dart';
 import 'package:taskmanagement_live/data/utils/urls.dart';
+import 'package:taskmanagement_live/ui/widgets/centered_circular_progress_indicator.dart';
 import 'package:taskmanagement_live/ui/widgets/screen_background.dart';
 import 'package:taskmanagement_live/ui/widgets/snack_bar_message.dart';
 
@@ -118,6 +119,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
               TextFormField(
                   controller: _passwordTEController,
+                  obscureText: true,
                   decoration: InputDecoration(
                     hintText: "Password",
                   ),
@@ -129,9 +131,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   }),
               Visibility(
                 visible: _registrationInProgress == false,
-                replacement: const Center(
-                  child: CircularProgressIndicator(),
-                ),
+                replacement: const CenteredCircularProgressIndicator(),
                 child: ElevatedButton(
                     onPressed: _onTapSubmitButton,
                     child: Icon(Icons.arrow_circle_right_outlined)),
@@ -189,10 +189,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
     _registrationInProgress = false;
     setState(() {});
     if (response.isSuccess) {
+      _clearTextFields();
       showSnackBarMessage(context, "User register Successful !");
     } else {
       showSnackBarMessage(context, response.errorMessage,true);
     }
+  }
+
+  void _clearTextFields(){
+    _emailTEController.clear();
+    _firstNameTEController.clear();
+    _lastNameTEController.clear();
+    _mobileTEController.clear();
+    _passwordTEController.clear();
   }
 
   void _onTapSignInButton() {
