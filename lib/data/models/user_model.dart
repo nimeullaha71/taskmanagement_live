@@ -51,6 +51,10 @@ class UserModel{
       };
   }
 
+  String get fulName{
+      return '$firstName $lastName';
+  }
+
 }
 
 // class UserModel {

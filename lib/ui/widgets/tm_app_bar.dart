@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:taskmanagement_live/ui/controllers/auth_controller.dart';
+import 'package:taskmanagement_live/ui/screens/login_screen.dart';
 import 'package:taskmanagement_live/ui/screens/update_profile_screen.dart';
 
 class TMAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -34,15 +36,15 @@ class TMAppBar extends StatelessWidget implements PreferredSizeWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("Nime Ullaha",
+                  Text(AuthController.userModel?.fulName ?? 'Unknown',
                       style:
                           textTheme.bodyLarge?.copyWith(color: Colors.white)),
-                  Text("nimeullaha@gmail.com",
+                  Text(AuthController.userModel?.email ?? 'Unknown',
                       style: textTheme.bodySmall?.copyWith(color: Colors.white))
                 ],
               ),
             ),
-            IconButton(onPressed: () {}, icon: Icon(Icons.logout))
+            IconButton(onPressed: ()=>_onTapLogOutButton(context), icon: Icon(Icons.logout))
           ],
         ),
       ),
@@ -52,6 +54,11 @@ class TMAppBar extends StatelessWidget implements PreferredSizeWidget {
   void _onTapProfileSection(BuildContext context) {
     Navigator.push(context,
         MaterialPageRoute(builder: (context) => UpdateProfileScreen()));
+  }
+  Future<void> _onTapLogOutButton(BuildContext context) async{
+    await AuthController.clearUserData();
+    Navigator.pushAndRemoveUntil(context,
+        MaterialPageRoute(builder: (context) => LoginScreen()),(predicate)=>false);
   }
 
   @override

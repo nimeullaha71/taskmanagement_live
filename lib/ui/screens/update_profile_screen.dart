@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:taskmanagement_live/data/models/user_model.dart';
+import 'package:taskmanagement_live/ui/controllers/auth_controller.dart';
 import 'package:taskmanagement_live/ui/widgets/screen_background.dart';
 import 'package:taskmanagement_live/ui/widgets/tm_app_bar.dart';
 
@@ -10,6 +13,29 @@ class UpdateProfileScreen extends StatefulWidget {
 }
 
 class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
+
+  final TextEditingController _emailTEController = TextEditingController();
+  final TextEditingController _firstNameTEController = TextEditingController();
+  final TextEditingController _lastNameTEController = TextEditingController();
+  final TextEditingController _mobileTEController = TextEditingController();
+  final TextEditingController _passwordTEController = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  final ImagePicker _imagePicker = ImagePicker();
+  XFile ? _pickedImage ;
+
+  @override
+  void initState() {
+    super.initState();
+    UserModel userModel = AuthController.userModel!;
+    _emailTEController.text = userModel.email;
+    _firstNameTEController.text = userModel.firstName;
+    _lastNameTEController.text = userModel.lastName;
+    _mobileTEController.text = userModel.mobile;
+
+
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,58 +47,90 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
         child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 32,),
-                Text("Update Profile",style: Theme.of(context).textTheme.titleLarge,),
-                const SizedBox(height: 24,),
+            child: Form(
+              key: _formKey,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
 
-                _buildPhotoPickerWidget(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 32,),
+                  Text("Update Profile",style: Theme.of(context).textTheme.titleLarge,),
+                  const SizedBox(height: 24,),
 
-                const SizedBox(height: 8,),
-                TextFormField(
-                  textInputAction: TextInputAction.next,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(
-                    hintText: "Email",
-                  ),
-                ),
-                const SizedBox(height: 8,),
-                TextFormField(
-                  textInputAction: TextInputAction.next,
-                  keyboardType: TextInputType.text,
-                  decoration: InputDecoration(
-                    hintText: "First Name",
-                  ),
-                ),
-                const SizedBox(height: 8,),
-                TextFormField(
-                  textInputAction: TextInputAction.next,
-                  keyboardType: TextInputType.text,
-                  decoration: InputDecoration(
-                    hintText: "Last Name",
-                  ),
-                ),
-                const SizedBox(height: 8,),
-                TextFormField(
-                  textInputAction: TextInputAction.next,
-                  keyboardType: TextInputType.phone,
-                  decoration: InputDecoration(
-                    hintText: "Phone",
-                  ),
-                ),
-                const SizedBox(height: 8,),
-                TextFormField(
-                  decoration: InputDecoration(
-                    hintText: "Password",
-                  ),
-                ),
-                
-                const SizedBox(height: 14,),
-                ElevatedButton(onPressed: _onTapSubmitButton, child: Icon(Icons.arrow_circle_right_outlined))
+                  _buildPhotoPickerWidget(),
 
-              ],
+                  const SizedBox(height: 8,),
+                  TextFormField(
+                    controller: _emailTEController,
+                    textInputAction: TextInputAction.next,
+                    keyboardType: TextInputType.emailAddress,
+                    enabled: false,
+                    decoration: InputDecoration(
+                      hintText: "Email",
+                    ),
+                  ),
+                  const SizedBox(height: 8,),
+                  TextFormField(
+                    controller: _firstNameTEController,
+                    textInputAction: TextInputAction.next,
+                    keyboardType: TextInputType.text,
+                    decoration: InputDecoration(
+                      hintText: "First Name",
+                    ),
+                    validator: (String ? value){
+                      if(value?.trim().isEmpty ?? true){
+                        return "Enter Your First Name";
+                      }
+                      return null;
+                    } ,
+                  ),
+                  const SizedBox(height: 8,),
+                  TextFormField(
+                    controller: _lastNameTEController,
+                    textInputAction: TextInputAction.next,
+                    keyboardType: TextInputType.text,
+                    decoration: InputDecoration(
+                      hintText: "Last Name",
+                    ),
+                    validator: (String ? value){
+                      if(value?.trim().isEmpty ?? true){
+                        return "Enter your last name";
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 8,),
+                  TextFormField(
+                    controller: _mobileTEController,
+                    textInputAction: TextInputAction.next,
+                    keyboardType: TextInputType.phone,
+                    decoration: InputDecoration(
+                      hintText: "Phone",
+                    ),
+                    validator: (String ? value) {
+                      String phone = value?.trim() ?? '';
+                      RegExp regExp = RegExp(r"^(?:\+?88|0088)?01[15-9]\d{8}$");
+                      //RegExp regExp = RegExp(r"^(?:\+?88|0088)?01[15-9]\d{8}$");
+                      if (regExp.hasMatch(phone) == false) {
+                        return "Enter your valid mobile number";
+                      }
+                      return null;
+                    }),
+                  const SizedBox(height: 8,),
+                  TextFormField(
+                    obscureText: true,
+                    controller: _passwordTEController,
+                    decoration: InputDecoration(
+                      hintText: "Password",
+                    ),
+                  ),
+
+                  const SizedBox(height: 14,),
+                  ElevatedButton(onPressed: _onTapSubmitButton, child: Icon(Icons.arrow_circle_right_outlined))
+
+                ],
+              ),
             ),
           ),
         ),
@@ -82,7 +140,9 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
   }
 
   void _onTapSubmitButton(){
-
+    if(_formKey.currentState!.validate()){
+      //update profile
+    }
   }
 
   Widget _buildPhotoPickerWidget() {
@@ -110,7 +170,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                         child: Text("Photo",style: TextStyle(color: Colors.white),),
                       ),
                       const SizedBox(width: 8,),
-                      Text("Select Your Photo")
+                      Text(_pickedImage?.name ?? "Select Your Photo")
                     ],
                   ),
                 ),
@@ -118,7 +178,14 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
   }
 
   Future<void> _onTapPhotoPicker()async {
+   XFile ? image = await _imagePicker.pickImage(source: ImageSource.gallery);
 
+   if(image != null){
+     _pickedImage = image;
+     setState(() {
+
+     });
+   }
   }
 
 }
