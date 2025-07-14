@@ -8,7 +8,7 @@ class AuthController{
   static UserModel ? userModel;
 
   static final String _tokenKey = 'token';
-  static final String _userDataKey = 'token';
+  static final String _userDataKey = 'userData';
 
   //save User Information
   static Future<void>saveUserInformation(String accessToken,UserModel user)async{

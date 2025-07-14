@@ -1,9 +1,16 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:taskmanagement_live/data/models/user_model.dart';
 import 'package:taskmanagement_live/ui/controllers/auth_controller.dart';
+import 'package:taskmanagement_live/ui/widgets/centered_circular_progress_indicator.dart';
 import 'package:taskmanagement_live/ui/widgets/screen_background.dart';
 import 'package:taskmanagement_live/ui/widgets/tm_app_bar.dart';
+
+import '../../data/service/network_client.dart';
+import '../../data/utils/urls.dart';
+import '../widgets/snack_bar_message.dart';
 
 class UpdateProfileScreen extends StatefulWidget {
   const UpdateProfileScreen({super.key});
@@ -13,7 +20,6 @@ class UpdateProfileScreen extends StatefulWidget {
 }
 
 class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
-
   final TextEditingController _emailTEController = TextEditingController();
   final TextEditingController _firstNameTEController = TextEditingController();
   final TextEditingController _lastNameTEController = TextEditingController();
@@ -21,8 +27,10 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
   final TextEditingController _passwordTEController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
+  bool _updateProfileInProgress = false;
+
   final ImagePicker _imagePicker = ImagePicker();
-  XFile ? _pickedImage ;
+  XFile? _pickedImage;
 
   @override
   void initState() {
@@ -32,8 +40,6 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
     _firstNameTEController.text = userModel.firstName;
     _lastNameTEController.text = userModel.lastName;
     _mobileTEController.text = userModel.mobile;
-
-
   }
 
   @override
@@ -42,7 +48,6 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
       appBar: TMAppBar(
         fromProfileScreen: true,
       ),
-
       body: ScreenBackground(
         child: SingleChildScrollView(
           child: Padding(
@@ -50,17 +55,23 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
             child: Form(
               key: _formKey,
               autovalidateMode: AutovalidateMode.onUserInteraction,
-
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 32,),
-                  Text("Update Profile",style: Theme.of(context).textTheme.titleLarge,),
-                  const SizedBox(height: 24,),
-
+                  const SizedBox(
+                    height: 32,
+                  ),
+                  Text(
+                    "Update Profile",
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                  const SizedBox(
+                    height: 24,
+                  ),
                   _buildPhotoPickerWidget(),
-
-                  const SizedBox(height: 8,),
+                  const SizedBox(
+                    height: 8,
+                  ),
                   TextFormField(
                     controller: _emailTEController,
                     textInputAction: TextInputAction.next,
@@ -70,7 +81,9 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                       hintText: "Email",
                     ),
                   ),
-                  const SizedBox(height: 8,),
+                  const SizedBox(
+                    height: 8,
+                  ),
                   TextFormField(
                     controller: _firstNameTEController,
                     textInputAction: TextInputAction.next,
@@ -78,14 +91,16 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                     decoration: InputDecoration(
                       hintText: "First Name",
                     ),
-                    validator: (String ? value){
-                      if(value?.trim().isEmpty ?? true){
+                    validator: (String? value) {
+                      if (value?.trim().isEmpty ?? true) {
                         return "Enter Your First Name";
                       }
                       return null;
-                    } ,
+                    },
                   ),
-                  const SizedBox(height: 8,),
+                  const SizedBox(
+                    height: 8,
+                  ),
                   TextFormField(
                     controller: _lastNameTEController,
                     textInputAction: TextInputAction.next,
@@ -93,31 +108,36 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                     decoration: InputDecoration(
                       hintText: "Last Name",
                     ),
-                    validator: (String ? value){
-                      if(value?.trim().isEmpty ?? true){
+                    validator: (String? value) {
+                      if (value?.trim().isEmpty ?? true) {
                         return "Enter your last name";
                       }
                       return null;
                     },
                   ),
-                  const SizedBox(height: 8,),
+                  const SizedBox(
+                    height: 8,
+                  ),
                   TextFormField(
-                    controller: _mobileTEController,
-                    textInputAction: TextInputAction.next,
-                    keyboardType: TextInputType.phone,
-                    decoration: InputDecoration(
-                      hintText: "Phone",
-                    ),
-                    validator: (String ? value) {
-                      String phone = value?.trim() ?? '';
-                      RegExp regExp = RegExp(r"^(?:\+?88|0088)?01[15-9]\d{8}$");
-                      //RegExp regExp = RegExp(r"^(?:\+?88|0088)?01[15-9]\d{8}$");
-                      if (regExp.hasMatch(phone) == false) {
-                        return "Enter your valid mobile number";
-                      }
-                      return null;
-                    }),
-                  const SizedBox(height: 8,),
+                      controller: _mobileTEController,
+                      textInputAction: TextInputAction.next,
+                      keyboardType: TextInputType.phone,
+                      decoration: InputDecoration(
+                        hintText: "Phone",
+                      ),
+                      validator: (String? value) {
+                        String phone = value?.trim() ?? '';
+                        RegExp regExp =
+                            RegExp(r"^(?:\+?88|0088)?01[15-9]\d{8}$");
+                        //RegExp regExp = RegExp(r"^(?:\+?88|0088)?01[15-9]\d{8}$");
+                        if (regExp.hasMatch(phone) == false) {
+                          return "Enter your valid mobile number";
+                        }
+                        return null;
+                      }),
+                  const SizedBox(
+                    height: 8,
+                  ),
                   TextFormField(
                     obscureText: true,
                     controller: _passwordTEController,
@@ -125,23 +145,61 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                       hintText: "Password",
                     ),
                   ),
-
-                  const SizedBox(height: 14,),
-                  ElevatedButton(onPressed: _onTapSubmitButton, child: Icon(Icons.arrow_circle_right_outlined))
-
+                  const SizedBox(
+                    height: 14,
+                  ),
+                  Visibility(
+                    visible: _updateProfileInProgress==false,
+                    replacement: const CenteredCircularProgressIndicator(),
+                    child: ElevatedButton(
+                        onPressed: _onTapSubmitButton,
+                        child: Icon(Icons.arrow_circle_right_outlined)),
+                  )
                 ],
               ),
             ),
           ),
         ),
       ),
-
     );
   }
 
-  void _onTapSubmitButton(){
-    if(_formKey.currentState!.validate()){
-      //update profile
+  void _onTapSubmitButton() {
+    if (_formKey.currentState!.validate()) {
+      _updateProfile();
+    }
+  }
+
+  Future<void> _updateProfile() async {
+    _updateProfileInProgress = true;
+    setState(() {});
+    Map<String, dynamic> requestBody = {
+      "email": _emailTEController.text.trim(),
+      "firstName": _firstNameTEController.text.trim(),
+      "lastName": _lastNameTEController.text.trim(),
+      "mobile": _mobileTEController.text.trim(),
+    };
+
+    if (_passwordTEController.text.isNotEmpty) {
+      requestBody["password"] = _passwordTEController.text;
+    }
+
+    if(_pickedImage != null){
+      List<int> imageBytes = await _pickedImage!.readAsBytes();
+      String encodedImage = base64Encode(imageBytes);
+      requestBody['photo'] = encodedImage;
+    }
+
+    NetworkResponse response = await NetworkClient.postRequest(
+        url: Urls.updateProfileUrl, body: requestBody);
+    _updateProfileInProgress = false;
+    setState(() {});
+    if (response.isSuccess) {
+
+      _passwordTEController.clear();
+      showSnackBarMessage(context, "User data updated Successfully !");
+    } else {
+      showSnackBarMessage(context, response.errorMessage, true);
     }
   }
 
@@ -149,43 +207,43 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
     return GestureDetector(
       onTap: _onTapPhotoPicker,
       child: Container(
-                  height: 50,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        height: 50,
-                        width:80,
-                        decoration: BoxDecoration(
-                          color: Colors.grey,
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(8),
-                            bottomLeft: Radius.circular(8)
-                          )
-                        ),
-                        alignment: Alignment.center,
-                        child: Text("Photo",style: TextStyle(color: Colors.white),),
-                      ),
-                      const SizedBox(width: 8,),
-                      Text(_pickedImage?.name ?? "Select Your Photo")
-                    ],
-                  ),
-                ),
+        height: 50,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Row(
+          children: [
+            Container(
+              height: 50,
+              width: 80,
+              decoration: BoxDecoration(
+                  color: Colors.grey,
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(8),
+                      bottomLeft: Radius.circular(8))),
+              alignment: Alignment.center,
+              child: Text(
+                "Photo",
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+            const SizedBox(
+              width: 8,
+            ),
+            Text(_pickedImage?.name ?? "Select Your Photo")
+          ],
+        ),
+      ),
     );
   }
 
-  Future<void> _onTapPhotoPicker()async {
-   XFile ? image = await _imagePicker.pickImage(source: ImageSource.gallery);
+  Future<void> _onTapPhotoPicker() async {
+    XFile? image = await _imagePicker.pickImage(source: ImageSource.gallery);
 
-   if(image != null){
-     _pickedImage = image;
-     setState(() {
-
-     });
-   }
+    if (image != null) {
+      _pickedImage = image;
+      setState(() {});
+    }
   }
-
 }
