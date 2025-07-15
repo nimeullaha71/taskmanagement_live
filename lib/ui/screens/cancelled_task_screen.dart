@@ -15,7 +15,7 @@ class _CancelledTaskScreenState extends State<CancelledTaskScreen> {
       body: ListView.separated(
         itemCount: 6,
         itemBuilder: (context,index){
-          return const Taskcard(taskStatus: TaskStatus.cancelled,);
+          //return const Taskcard(taskStatus: TaskStatus.cancelled,);
         }, separatorBuilder: (context,index)=>const SizedBox(height: 8,),),
     );
   }

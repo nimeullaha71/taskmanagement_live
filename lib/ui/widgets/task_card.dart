@@ -1,5 +1,7 @@
+import 'package:date_format/date_format.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:taskmanagement_live/data/models/task_model.dart';
 
 enum TaskStatus{
   sNew,
@@ -10,10 +12,11 @@ enum TaskStatus{
 
 class Taskcard extends StatelessWidget {
   const Taskcard({
-    super.key, required this.taskStatus,
+    super.key, required this.taskStatus, required this.taskModel,
   });
 
   final TaskStatus taskStatus;
+  final TaskModel taskModel;
 
   @override
   Widget build(BuildContext context) {
@@ -26,12 +29,13 @@ class Taskcard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Title will be here",style: TextStyle(fontSize: 16,fontWeight: FontWeight.w600),),
-            Text("Description Will be here"),
-            Text("Date :07/11/2025"),
+            Text(taskModel.title,style: TextStyle(fontSize: 16,fontWeight: FontWeight.w600),),
+            Text(taskModel.description),
+            //Text(taskModel.createdDate),
+            Text(formatDate(DateTime.parse(taskModel.createdDate),[yyyy, '-', mm, '-', dd])),
             Row(
               children: [
-                Chip(label: Text("New",style: TextStyle(color: Colors.white),),
+                Chip(label: Text(taskModel.status,style: TextStyle(color: Colors.white),),
                   padding: EdgeInsets.symmetric(horizontal: 8),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(50),
