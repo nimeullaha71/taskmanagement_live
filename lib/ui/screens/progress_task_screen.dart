@@ -1,4 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:taskmanagement_live/ui/widgets/centered_circular_progress_indicator.dart';
+import '../../data/models/task_list_model.dart';
+import '../../data/models/task_model.dart';
+import '../../data/service/network_client.dart';
+import '../../data/utils/urls.dart';
+import '../widgets/snack_bar_message.dart';
 import '../widgets/task_card.dart';
 
 class ProgressTaskScreen extends StatefulWidget {
@@ -9,15 +15,50 @@ class ProgressTaskScreen extends StatefulWidget {
 }
 
 class _ProgressTaskScreenState extends State<ProgressTaskScreen> {
+
+  bool _getProgressTaskInProgress = false;
+  List<TaskModel> _progressTaskList = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _getAllProgressTaskList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView.separated(
-        itemCount: 6,
-        itemBuilder: (context,index){
-          //return const Taskcard(taskStatus: TaskStatus.progress,);
-        }, separatorBuilder: (context,index)=>const SizedBox(height: 8,),),
+      body: Visibility(
+        visible: _getProgressTaskInProgress==false,
+        replacement: CenteredCircularProgressIndicator(),
+        child: ListView.separated(
+          itemCount: _progressTaskList.length,
+          itemBuilder: (context,index){
+            return  Taskcard(
+              taskStatus: TaskStatus.progress,
+              taskModel: _progressTaskList[index],
+
+            );
+          }, separatorBuilder: (context,index)=>const SizedBox(height: 8,),),
+      ),
     );
+  }
+
+  Future<void> _getAllProgressTaskList() async {
+    _getProgressTaskInProgress = true;
+    setState(() {});
+    final NetworkResponse response =
+    await NetworkClient.getRequest(url: Urls.progressTaskListUrl);
+
+    if (response.isSuccess) {
+      TaskListModel taskListModel = TaskListModel.fromJson(response.data ?? {});
+      _progressTaskList = taskListModel.taskList;
+    } else {
+      showSnackBarMessage(context, response.errorMessage, true);
+    }
+
+    _getProgressTaskInProgress = false;
+    setState(() {});
   }
 
 }
