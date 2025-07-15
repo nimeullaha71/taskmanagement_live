@@ -56,6 +56,7 @@ class _NewTaskScreenState extends State<NewTaskScreen> {
                   return  Taskcard(
                     taskStatus: TaskStatus.sNew,
                     taskModel: _newTaskList[index],
+                    refreshList: _getAllNewTaskList,
                   );
                 },
                 separatorBuilder: (context, index) => const SizedBox(
