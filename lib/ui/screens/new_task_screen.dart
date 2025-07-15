@@ -56,7 +56,7 @@ class _NewTaskScreenState extends State<NewTaskScreen> {
                   return  Taskcard(
                     taskStatus: TaskStatus.sNew,
                     taskModel: _newTaskList[index],
-                    refreshList: _getAllNewTaskList,
+                    refreshList: _refreshAll,
                   );
                 },
                 separatorBuilder: (context, index) => const SizedBox(
@@ -130,4 +130,11 @@ class _NewTaskScreenState extends State<NewTaskScreen> {
     _getNewTaskInProgreess = false;
     setState(() {});
   }
+
+
+  Future<void> _refreshAll() async {
+    await _getAllTaskStatusCount();
+    await _getAllNewTaskList();
+  }
+
 }

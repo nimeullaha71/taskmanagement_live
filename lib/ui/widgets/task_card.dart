@@ -1,11 +1,11 @@
 import 'package:date_format/date_format.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:taskmanagement_live/data/models/task_model.dart';
 import 'package:taskmanagement_live/data/service/network_client.dart';
 import 'package:taskmanagement_live/data/utils/urls.dart';
 import 'package:taskmanagement_live/ui/widgets/centered_circular_progress_indicator.dart';
 import 'package:taskmanagement_live/ui/widgets/snack_bar_message.dart';
+import 'package:taskmanagement_live/ui/widgets/summary_card.dart';
 
 enum TaskStatus{
   sNew,
@@ -62,7 +62,7 @@ class _TaskcardState extends State<Taskcard> {
                   replacement: CenteredCircularProgressIndicator(),
                   child: Row(
                     children: [
-                      IconButton(onPressed: (){}, icon: Icon(Icons.delete)),
+                      IconButton(onPressed: _deleteTask, icon: Icon(Icons.delete)),
                       IconButton(onPressed: _showUpdateStatusDialog, icon: Icon(Icons.edit)),
                     ],
                   ),
@@ -158,6 +158,25 @@ class _TaskcardState extends State<Taskcard> {
 
     if(response.isSuccess){
       widget.refreshList();
+    }else{
+      setState(() {});
+      if(mounted){
+        showSnackBarMessage(context, response.errorMessage,true);
+      }
+
+    }
+  }
+
+  Future<void> _deleteTask()async{
+    _inProgress = true;
+    setState(() {});
+
+    final NetworkResponse response = await NetworkClient.getRequest(url: Urls.deleteTaskUrl(widget.taskModel.id));
+
+    _inProgress = false;
+    if(response.isSuccess){
+      widget.refreshList();
+
     }else{
       setState(() {});
       showSnackBarMessage(context, response.errorMessage,true);
