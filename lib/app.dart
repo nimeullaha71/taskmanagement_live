@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:taskmanagement_live/controller_binder.dart';
 import 'package:taskmanagement_live/ui/screens/splash_screen.dart';
 
 class TaskManagerApp extends StatelessWidget {
@@ -8,7 +10,7 @@ class TaskManagerApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  MaterialApp(
+    return  GetMaterialApp(
       navigatorKey: TaskManagerApp.navigatorKey,
       theme: ThemeData(
         colorSchemeSeed: Colors.green,
@@ -46,6 +48,7 @@ class TaskManagerApp extends StatelessWidget {
 
       ),
       home: const SplashScreen(),
+      initialBinding: ControllerBinder(),
     );
   }
   OutlineInputBorder _getZeroBode(){
