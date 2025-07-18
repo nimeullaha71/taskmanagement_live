@@ -49,11 +49,11 @@ class _NewTaskScreenState extends State<NewTaskScreen> {
                   child: ListView.separated(
                     primary: false,
                     shrinkWrap: true,
-                    itemCount: controller.newtaskList.length,
+                    itemCount: controller.newTaskList.length,
                     itemBuilder: (context, index) {
                       return  Taskcard(
                         taskStatus: TaskStatus.sNew,
-                        taskModel: controller.newtaskList[index],
+                        taskModel: controller.newTaskList[index],
                         refreshList: _refreshAll,
                       );
                     },

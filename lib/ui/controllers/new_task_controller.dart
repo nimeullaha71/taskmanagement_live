@@ -18,7 +18,7 @@ class NewTaskController extends GetxController{
 
   List<TaskModel> _newTaskList = [];
 
-  List<TaskModel> get newtaskList => _newTaskList;
+  List<TaskModel> get newTaskList => _newTaskList;
 
 
 
