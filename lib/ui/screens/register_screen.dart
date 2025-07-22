@@ -1,14 +1,12 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:taskmanagement_live/data/service/network_client.dart';
-import 'package:taskmanagement_live/data/utils/urls.dart';
+import 'package:get/get.dart';
+import 'package:taskmanagement_live/ui/controllers/register_controller.dart';
 import 'package:taskmanagement_live/ui/widgets/centered_circular_progress_indicator.dart';
 import 'package:taskmanagement_live/ui/widgets/screen_background.dart';
 import 'package:taskmanagement_live/ui/widgets/snack_bar_message.dart';
 
-import '../utils/assets_path.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -24,8 +22,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _mobileTEController = TextEditingController();
   final TextEditingController _passwordTEController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final RegisterController _registerController = Get.find<RegisterController>();
 
-  bool _registrationInProgress = false;
 
   @override
   Widget build(BuildContext context) {
@@ -130,7 +128,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     return null;
                   }),
               Visibility(
-                visible: _registrationInProgress == false,
+                visible: _registerController.registerInProgress == false,
                 replacement: const CenteredCircularProgressIndicator(),
                 child: ElevatedButton(
                     onPressed: _onTapSubmitButton,
@@ -175,24 +173,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   Future<void> _registerUser() async {
-    _registrationInProgress = true;
-    setState(() {});
-    Map<String, dynamic> requestBody = {
-      "email": _emailTEController.text.trim(),
-      "firstName": _firstNameTEController.text.trim(),
-      "lastName": _lastNameTEController.text.trim(),
-      "mobile": _mobileTEController.text.trim(),
-      "password": _passwordTEController.text
-    };
-    NetworkResponse response = await NetworkClient.postRequest(
-        url: Urls.registerUrl, body: requestBody);
-    _registrationInProgress = false;
-    setState(() {});
-    if (response.isSuccess) {
+    final bool isSuccess = await _registerController.registerUser(_emailTEController.text.trim(), _firstNameTEController.text.trim(), _lastNameTEController.text.trim(), _mobileTEController.text.trim(), _passwordTEController.text);
+    if (isSuccess) {
       _clearTextFields();
       showSnackBarMessage(context, "User register Successful !");
     } else {
-      showSnackBarMessage(context, response.errorMessage,true);
+      showSnackBarMessage(context, _registerController.errorMessage!,true);
     }
   }
 

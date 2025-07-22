@@ -1,11 +1,9 @@
 import 'package:get/get.dart';
 
-import '../../data/models/login_model.dart';
 import '../../data/models/task_list_model.dart';
 import '../../data/models/task_model.dart';
 import '../../data/service/network_client.dart';
 import '../../data/utils/urls.dart';
-import 'auth_controller.dart';
 
 class NewTaskController extends GetxController{
   bool _getNewTaskInProgress = false;

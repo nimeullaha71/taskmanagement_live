@@ -1,13 +1,8 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
-import 'package:taskmanagement_live/data/models/login_model.dart';
-import 'package:taskmanagement_live/data/service/network_client.dart';
-import 'package:taskmanagement_live/data/utils/urls.dart';
-import 'package:taskmanagement_live/ui/controllers/auth_controller.dart';
 import 'package:taskmanagement_live/ui/controllers/login_controller.dart';
 import 'package:taskmanagement_live/ui/screens/forgot_password_verify_email_screen.dart';
 import 'package:taskmanagement_live/ui/screens/main_bottom_nav_screen.dart';
@@ -16,7 +11,6 @@ import 'package:taskmanagement_live/ui/widgets/centered_circular_progress_indica
 import 'package:taskmanagement_live/ui/widgets/screen_background.dart';
 import 'package:taskmanagement_live/ui/widgets/snack_bar_message.dart';
 
-import '../utils/assets_path.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
