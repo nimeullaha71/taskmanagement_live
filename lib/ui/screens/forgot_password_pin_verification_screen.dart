@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:taskmanagement_live/ui/controllers/pin_verification_controller.dart';
 import 'package:taskmanagement_live/ui/screens/reset_password_screen.dart';
-
 import '../widgets/screen_background.dart';
 import '../widgets/snack_bar_message.dart';
 

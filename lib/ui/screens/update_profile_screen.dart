@@ -1,15 +1,14 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:taskmanagement_live/data/models/user_model.dart';
 import 'package:taskmanagement_live/ui/controllers/auth_controller.dart';
+import 'package:taskmanagement_live/ui/controllers/update_profile_controller.dart';
 import 'package:taskmanagement_live/ui/widgets/centered_circular_progress_indicator.dart';
 import 'package:taskmanagement_live/ui/widgets/screen_background.dart';
 import 'package:taskmanagement_live/ui/widgets/tm_app_bar.dart';
-
-import '../../data/service/network_client.dart';
-import '../../data/utils/urls.dart';
 import '../widgets/snack_bar_message.dart';
 
 class UpdateProfileScreen extends StatefulWidget {
@@ -26,8 +25,6 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
   final TextEditingController _mobileTEController = TextEditingController();
   final TextEditingController _passwordTEController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
-  bool _updateProfileInProgress = false;
 
   final ImagePicker _imagePicker = ImagePicker();
   XFile? _pickedImage;
@@ -148,12 +145,16 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                   const SizedBox(
                     height: 14,
                   ),
-                  Visibility(
-                    visible: _updateProfileInProgress==false,
-                    replacement: const CenteredCircularProgressIndicator(),
-                    child: ElevatedButton(
-                        onPressed: _onTapSubmitButton,
-                        child: Icon(Icons.arrow_circle_right_outlined)),
+                  GetBuilder<UpdateProfileController>(
+                    builder: (controller) {
+                      return Visibility(
+                        visible: controller.updateProfileInProgress==false,
+                        replacement: const CenteredCircularProgressIndicator(),
+                        child: ElevatedButton(
+                            onPressed: _onTapSubmitButton,
+                            child: Icon(Icons.arrow_circle_right_outlined)),
+                      );
+                    }
                   )
                 ],
               ),
@@ -171,8 +172,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
   }
 
   Future<void> _updateProfile() async {
-    _updateProfileInProgress = true;
-    setState(() {});
+
     Map<String, dynamic> requestBody = {
       "email": _emailTEController.text.trim(),
       "firstName": _firstNameTEController.text.trim(),
@@ -189,17 +189,13 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
       String encodedImage = base64Encode(imageBytes);
       requestBody['photo'] = encodedImage;
     }
-
-    NetworkResponse response = await NetworkClient.postRequest(
-        url: Urls.updateProfileUrl, body: requestBody);
-    _updateProfileInProgress = false;
-    setState(() {});
-    if (response.isSuccess) {
+    bool isSuccess = await Get.find<UpdateProfileController>().updateProfile(_emailTEController.text.trim(), _firstNameTEController.text.trim(), _lastNameTEController.text.trim(), _mobileTEController.text.trim());
+    if (isSuccess) {
 
       _passwordTEController.clear();
       showSnackBarMessage(context, "User data updated Successfully !");
     } else {
-      showSnackBarMessage(context, response.errorMessage, true);
+      showSnackBarMessage(context, Get.find<UpdateProfileController>().errorMessage!, true);
     }
   }
 

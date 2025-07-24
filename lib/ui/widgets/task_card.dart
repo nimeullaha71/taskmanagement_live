@@ -1,11 +1,10 @@
 import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:taskmanagement_live/data/models/task_model.dart';
-import 'package:taskmanagement_live/data/service/network_client.dart';
-import 'package:taskmanagement_live/data/utils/urls.dart';
+import 'package:taskmanagement_live/ui/controllers/task_card_controller.dart';
 import 'package:taskmanagement_live/ui/widgets/centered_circular_progress_indicator.dart';
 import 'package:taskmanagement_live/ui/widgets/snack_bar_message.dart';
-import 'package:taskmanagement_live/ui/widgets/summary_card.dart';
 
 enum TaskStatus{
   sNew,
@@ -29,7 +28,7 @@ class Taskcard extends StatefulWidget {
 
 class _TaskcardState extends State<Taskcard> {
 
-  bool _inProgress = false;
+  final TaskcardController _taskcardController = Get.find<TaskcardController>();
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +57,7 @@ class _TaskcardState extends State<Taskcard> {
                 ),
                 const Spacer(),
                 Visibility(
-                  visible: _inProgress==false,
+                  visible: _taskcardController.inProgress==false,
                   replacement: CenteredCircularProgressIndicator(),
                   child: Row(
                     children: [
@@ -146,40 +145,24 @@ class _TaskcardState extends State<Taskcard> {
 
   bool isSelected(String status)=>widget.taskModel.status==status;
 
-
   Future<void> _changeTaskStatus(String status)async{
-    _inProgress = true;
-    setState(() {});
 
-    final NetworkResponse response = await NetworkClient.getRequest(url: Urls.updateTaskStatusUrl(widget.taskModel.id,status));
+    bool isSuccess = await Get.find<TaskcardController>().changeTaskStatus(widget.taskModel.id,status);
 
-    _inProgress = false;
-
-
-    if(response.isSuccess){
+    if(isSuccess){
       widget.refreshList();
     }else{
-      setState(() {});
-      if(mounted){
-        showSnackBarMessage(context, response.errorMessage,true);
-      }
-
+        showSnackBarMessage(context, _taskcardController.errorMessage!,true);
     }
   }
 
   Future<void> _deleteTask()async{
-    _inProgress = true;
-    setState(() {});
 
-    final NetworkResponse response = await NetworkClient.getRequest(url: Urls.deleteTaskUrl(widget.taskModel.id));
-
-    _inProgress = false;
-    if(response.isSuccess){
+    bool isSuccess = await Get.find<TaskcardController>().deleteTask(widget.taskModel.id);
+    if(isSuccess){
       widget.refreshList();
-
     }else{
-      setState(() {});
-      showSnackBarMessage(context, response.errorMessage,true);
+      showSnackBarMessage(context, _taskcardController.errorMessage!,true);
     }
   }
 

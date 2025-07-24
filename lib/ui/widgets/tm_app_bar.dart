@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:taskmanagement_live/ui/controllers/auth_controller.dart';
 import 'package:taskmanagement_live/ui/screens/login_screen.dart';
 import 'package:taskmanagement_live/ui/screens/update_profile_screen.dart';
@@ -20,7 +21,6 @@ class TMAppBar extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: Colors.green,
       title: GestureDetector(
         onTap: () {
-
           if(fromProfileScreen ?? false){
             return;
           }
@@ -61,13 +61,12 @@ class TMAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   void _onTapProfileSection(BuildContext context) {
-    Navigator.push(context,
-        MaterialPageRoute(builder: (context) => UpdateProfileScreen()));
+    Get.to(()=>UpdateProfileScreen());
   }
   Future<void> _onTapLogOutButton(BuildContext context) async{
     await AuthController.clearUserData();
-    Navigator.pushAndRemoveUntil(context,
-        MaterialPageRoute(builder: (context) => LoginScreen()),(predicate)=>false);
+    Get.offAll(()=>LoginScreen());
+
   }
 
   @override

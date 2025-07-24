@@ -36,7 +36,6 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     String ? email = widget.email;
     inputOnChange("email",email );
     inputOnChange("OTP",otp);
-
   }
 
   inputOnChange(mapKey,textValue){
@@ -153,7 +152,4 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     );
   }
 
-// void _onTapRegistration(){
-//   Navigator.push(context, MaterialPageRoute(builder: (context)=>RegistratonScreen()));
-// }
 }
