@@ -4,6 +4,7 @@ import 'package:taskmanagement_live/ui/controllers/login_controller.dart';
 import 'package:taskmanagement_live/ui/controllers/new_task_controller.dart';
 import 'package:taskmanagement_live/ui/controllers/pin_verification_controller.dart';
 import 'package:taskmanagement_live/ui/controllers/register_controller.dart';
+import 'package:taskmanagement_live/ui/controllers/reset_password_controller.dart';
 
 class ControllerBinder extends Bindings{
   @override
@@ -13,6 +14,7 @@ class ControllerBinder extends Bindings{
     Get.put(RegisterController());
     Get.put(ForgotPasswordController());
     Get.put(PinVerificationController());
+    Get.put(ResetPasswordController());
   }
 
 }
