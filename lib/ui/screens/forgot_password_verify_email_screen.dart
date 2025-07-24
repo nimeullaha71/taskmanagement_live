@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:taskmanagement_live/ui/controllers/forgot_password_controller.dart';
 import 'package:taskmanagement_live/ui/screens/forgot_password_pin_verification_screen.dart';
-import 'package:taskmanagement_live/ui/screens/register_screen.dart';
-
 import '../widgets/screen_background.dart';
+import '../widgets/snack_bar_message.dart';
 
 class ForgotPasswordVerifyEmailScreen extends StatefulWidget {
   const ForgotPasswordVerifyEmailScreen({super.key});
@@ -57,7 +57,7 @@ class _ForgotPasswordVerifyEmailScreenState extends State<ForgotPasswordVerifyEm
                       height: 10,
                     ),
                     ElevatedButton(
-                        onPressed: _onTapSubmitButton, child: Icon(Icons.arrow_circle_right_outlined)),
+                        onPressed: _emailVerify, child: Icon(Icons.arrow_circle_right_outlined)),
                     const SizedBox(
                       height: 32,
                     ),
@@ -79,8 +79,6 @@ class _ForgotPasswordVerifyEmailScreenState extends State<ForgotPasswordVerifyEm
                                       color: Colors.green,
                                       fontWeight: FontWeight.bold,
                                     ),
-                                    recognizer: TapGestureRecognizer()
-                                      ..onTap = _onTapSignInButton,
                                   ),
                                 ]),
                           )
@@ -93,20 +91,31 @@ class _ForgotPasswordVerifyEmailScreenState extends State<ForgotPasswordVerifyEm
             )));
   }
 
-  void _onTapSubmitButton(){
-    Navigator.push(context, MaterialPageRoute(builder: (context)=> const ForgotPasswordPinVerificationScreen()));
+  Future<void> _emailVerify() async {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+
+    bool isSuccess = await Get.find<ForgotPasswordController>().emailVerify(_emailTEController.text);
+
+    if (isSuccess) {
+      if (mounted) {
+        Get.to(ForgotPasswordPinVerificationScreen(email: _emailTEController.text));
+        showSnackBarMessage(context, "6-digit PIN sent to your mail.");
+      }
+    } else {
+      if (mounted) {
+        showSnackBarMessage(context, "Request failed! Try again.", true);
+      }
+    }
   }
 
 
-  void _onTapSignInButton() {
-    Navigator.pop(context);
-  }
 
   @override
   void dispose() {
     _emailTEController.dispose();
     super.dispose();
-
   }
 
 }

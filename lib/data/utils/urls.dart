@@ -12,5 +12,9 @@ class Urls{
   static const String CanceledTaskListUrl = '$_baseUrl/listTaskByStatus/Cancel';
   static String updateTaskStatusUrl(String taskId,String status) => '$_baseUrl/updateTaskStatus/$taskId/$status';
   static String deleteTaskUrl(String taskId) => '$_baseUrl/deleteTask/$taskId';
+  static recoverEmail(String email) => "$_baseUrl/RecoverVerifyEmail/$email";
+  static OTPVerify(String email,String OTP) => "$_baseUrl/RecoverVerifyOtp/$email/$OTP";
+  static const String resetPasswordUrl = "$_baseUrl/RecoverResetPassword";
+
 
 }

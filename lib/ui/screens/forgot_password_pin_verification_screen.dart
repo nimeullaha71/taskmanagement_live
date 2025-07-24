@@ -1,15 +1,16 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
-import 'package:taskmanagement_live/ui/screens/login_screen.dart';
-import 'package:taskmanagement_live/ui/screens/register_screen.dart';
+import 'package:taskmanagement_live/ui/controllers/pin_verification_controller.dart';
 import 'package:taskmanagement_live/ui/screens/reset_password_screen.dart';
 
 import '../widgets/screen_background.dart';
+import '../widgets/snack_bar_message.dart';
 
 class ForgotPasswordPinVerificationScreen extends StatefulWidget {
-  const ForgotPasswordPinVerificationScreen({super.key});
+  final String email;
+  const ForgotPasswordPinVerificationScreen({super.key, required this.email,});
 
   @override
   State<ForgotPasswordPinVerificationScreen> createState() => _ForgotPasswordPinVerificationScreenState();
@@ -72,7 +73,7 @@ class _ForgotPasswordPinVerificationScreenState extends State<ForgotPasswordPinV
                       height: 16,
                     ),
                     ElevatedButton(
-                        onPressed: _onTapSubmitButton, child: Text("Verify")),
+                        onPressed: _VerifyOTP, child: Text("Verify")),
                     const SizedBox(
                       height: 32,
                     ),
@@ -94,8 +95,6 @@ class _ForgotPasswordPinVerificationScreenState extends State<ForgotPasswordPinV
                                       color: Colors.green,
                                       fontWeight: FontWeight.bold,
                                     ),
-                                    recognizer: TapGestureRecognizer()
-                                      ..onTap = _onTapSignInButton,
                                   ),
                                 ]),
                           )
@@ -108,14 +107,21 @@ class _ForgotPasswordPinVerificationScreenState extends State<ForgotPasswordPinV
             )));
   }
 
-  void _onTapSubmitButton(){
-    Navigator.push(context, MaterialPageRoute(builder: (context)=>ResetPasswordScreen()));
+
+  Future<void> _VerifyOTP() async {
+    if (_formKey.currentState!.validate()) {
+
+      bool isSuccess = await Get.find<PinVerificationController>().VerifyOTP(widget.email, _pinCodeTEController.text);
+      if (isSuccess) {
+        Get.to(ResetPasswordScreen(email: widget.email, OTP: _pinCodeTEController.text));
+        showSnackBarMessage(context, "Request success.");
+      } else {
+        showSnackBarMessage(context, "Request failed ! try again later", true);
+      }
+    }
   }
 
 
-  void _onTapSignInButton() {
-    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>const LoginScreen()), (pre)=>false);
-  }
   @override
   void dispose() {
     _pinCodeTEController.dispose();
